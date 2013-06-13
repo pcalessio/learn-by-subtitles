@@ -1,4 +1,4 @@
-package main.scala
+package com.github.fedeoasi.app
 
 import org.apache.xmlrpc.client.XmlRpcClient
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl
@@ -26,7 +26,6 @@ class OpenSubtitlesSearcher {
   }
 
   def searchSubtitles = {
-    println("Logging in")
     println(token)
     val searchParam: java.util.Map[String, AnyRef] = new java.util.HashMap[String, AnyRef]
     searchParam.put("sublanguageid", "eng")

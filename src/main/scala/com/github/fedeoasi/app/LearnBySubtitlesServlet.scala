@@ -1,7 +1,5 @@
 package com.github.fedeoasi.app
 
-import org.scalatra._
-import scalate.ScalateSupport
 
 class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
 
@@ -13,5 +11,17 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
       </body>
     </html>
   }
-  
+
+  get("/subtitles") {
+    val title = multiParams("title")
+    val searcher = new OpenSubtitlesSearcher()
+    searcher.searchSubtitles()
+
+    <html>
+      <body>
+        <h1>Subtitles for {}</h1>
+        Say <a href="hello-scalate">hello to Scalate</a>.
+      </body>
+    </html>
+  }
 }

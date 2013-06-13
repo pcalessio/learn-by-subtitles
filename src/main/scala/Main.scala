@@ -1,4 +1,4 @@
-import main.scala.OpenSubtitlesSearcher
+import com.github.fedeoasi.app.OpenSubtitlesSearcher
 
 object Main {
   def main(args: Array[String]) {
