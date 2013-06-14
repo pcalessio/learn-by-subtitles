@@ -18,14 +18,14 @@ class OpenSubtitlesSearcher {
   val client = new XmlRpcClient();
   client.setTransportFactory(new XmlRpcSunHttpTransportFactory(client));
   client.setConfig(config);
-  var token = "os0vunh4rrcbomjbk6id6sbts0"
+  var token = login
 
   def login = {
     val response = client.execute(config, "LogIn", Array[AnyRef]("", "", "", System.getenv(APP_USER_AGENT)))
     response.asInstanceOf[Map[String, String]].get("token")
   }
 
-  def searchSubtitles = {
+  def searchSubtitles(): String = {
     println(token)
     val searchParam: java.util.Map[String, AnyRef] = new java.util.HashMap[String, AnyRef]
     searchParam.put("sublanguageid", "eng")
@@ -42,8 +42,9 @@ class OpenSubtitlesSearcher {
     dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("IDSubtitleFile")))
 
     if (!dataArray.isEmpty) {
-      downloadSubtitle(dataArray(0).asInstanceOf[Map[String, String]].get("IDSubtitleFile"))
+      return downloadSubtitle(dataArray(0).asInstanceOf[Map[String, String]].get("IDSubtitleFile")).asInstanceOf[String]
     }
+    return null
   }
 
   def downloadSubtitle(id: String) = {
