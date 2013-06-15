@@ -9,6 +9,7 @@ import java.util.zip.GZIPInputStream
 import java.io.{BufferedOutputStream, OutputStream, ByteArrayOutputStream, ByteArrayInputStream}
 import org.apache.ws.commons.util.Base64
 import org.apache.commons.io.IOUtils
+import util.Random
 
 class OpenSubtitlesSearcher {
   val APP_USER_AGENT = "LBS_USER_AGENT"
@@ -18,31 +19,34 @@ class OpenSubtitlesSearcher {
   val client = new XmlRpcClient();
   client.setTransportFactory(new XmlRpcSunHttpTransportFactory(client));
   client.setConfig(config);
-  var token = login
+  var token = "uusu1vs6tslmotr35u9ruvojt0"
 
   def login = {
     val response = client.execute(config, "LogIn", Array[AnyRef]("", "", "", System.getenv(APP_USER_AGENT)))
     response.asInstanceOf[Map[String, String]].get("token")
   }
 
-  def searchSubtitles(): String = {
-    println(token)
+  def searchSubtitles(imdbId: String): String = {
+    println("searching for " + imdbId)
     val searchParam: java.util.Map[String, AnyRef] = new java.util.HashMap[String, AnyRef]
     searchParam.put("sublanguageid", "eng")
-    searchParam.put("imdbid", "0167261")
+    searchParam.put("imdbid", imdbId)
     val response = client.execute(config, "SearchSubtitles", Array[AnyRef](token, Array(searchParam)))
     println(response)
     val responseMap: Map[String, AnyRef] = response.asInstanceOf[Map[String, AnyRef]]
+    val data = responseMap.get("data")
+    if (!data.isInstanceOf[Array[Object]]) {
+      println("No data returned for id " + imdbId)
+      return null
+    }
     val dataArray: Array[Object] = responseMap.get("data").asInstanceOf[Array[Object]]
-    println(dataArray(0).asInstanceOf[java.util.Map[String, String]].keySet())
-    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("SubDownloadLink")))
-    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("ZipDownloadLink")))
-    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("MovieReleaseName")))
-    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("MovieName")))
-    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("IDSubtitleFile")))
+    val index: Int = new Random().nextInt(dataArray.length)
+    println("getting subtitle at index " + index)
+    println(dataArray(index).asInstanceOf[java.util.Map[String, String]].keySet())
+    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("LanguageName")))
 
     if (!dataArray.isEmpty) {
-      return downloadSubtitle(dataArray(0).asInstanceOf[Map[String, String]].get("IDSubtitleFile")).asInstanceOf[String]
+      return downloadSubtitle(dataArray(index).asInstanceOf[Map[String, String]].get("IDSubtitleFile")).asInstanceOf[String]
     }
     return null
   }
@@ -54,12 +58,10 @@ class OpenSubtitlesSearcher {
     val dataString = responseMap.get("data").asInstanceOf[Array[Object]](0)
       .asInstanceOf[java.util.Map[String, AnyRef]]
       .get("data").asInstanceOf[String]
-    println(dataString)
 
     val decodedBytes: Array[Byte] = base64decode(dataString)
-    println(decodedBytes)
     val subtitle: Array[Byte] = gunzip(decodedBytes)
-    println(new String(subtitle))
+    new String(subtitle)
   }
 
   def downloadSubtitles(ids: Array[Int]) = {

@@ -25,6 +25,7 @@ object LearnBySubtitlesAppBuild extends Build {
         "org.apache.xmlrpc" % "xmlrpc" % "3.1.3",
         "org.apache.xmlrpc" % "xmlrpc-client" % "3.1.3",
         "org.apache.commons" % "commons-io" % "1.3.2",
+        "commons-lang" % "commons-lang" % "2.6",
         "com.h2database" % "h2" % "1.2.134",
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
