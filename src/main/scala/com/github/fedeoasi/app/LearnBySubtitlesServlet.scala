@@ -25,5 +25,13 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
       "imdbId" -> imdbId)
   }
 
-
+  get("/movies") {
+    contentType = "application/json"
+    val titles: Seq[String] = multiParams("title")
+    var movie = "{}"
+    if(titles.size > 0) {
+      movie = ImdbApi.searchMovieJson(titles(0))
+    }
+    movie
+  }
 }

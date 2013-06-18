@@ -27,6 +27,8 @@ object LearnBySubtitlesAppBuild extends Build {
         "org.apache.commons" % "commons-io" % "1.3.2",
         "commons-lang" % "commons-lang" % "2.6",
         "com.h2database" % "h2" % "1.2.134",
+        "org.codehaus.jackson" % "jackson-core-asl" % "1.6.1",
+        "net.databinder.dispatch" %% "dispatch-core" % "0.10.1",
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",

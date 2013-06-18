@@ -1,13 +1,13 @@
-- attributes("title") = "Welcome to Subtitle Search"
-- attributes("headline") = "Enter IMDB id"
+- attributes("title") = "Welcome to Movie Search"
+- attributes("headline") = "Enter Title"
 -@ val imdbId: String
 -@ val subtitles: String
 
 :javascript
     function something() {
-        var id = $('#imdbSearchInput').val();
+        var title = $('#imdbSearchInput').val();
         if(id.length > 0) {
-            window.location = window.location = "/subtitles?imdbid=" + id;
+            window.location = window.location = "/movies?title=" + title;
         } else {
             alert('Inappropriate Value');
         }
