@@ -1,5 +1,7 @@
 package com.github.fedeoasi.app
 
+import model.Movie
+
 class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
 
   get("/") {
@@ -26,12 +28,12 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
   }
 
   get("/movies") {
-    contentType = "application/json"
+    contentType = "text/html"
     val titles: Seq[String] = multiParams("title")
-    var movie = "{}"
+    var movie = new Movie("", 0, "", "")
     if(titles.size > 0) {
-      movie = ImdbApi.searchMovieJson(titles(0))
+      movie = ImdbApi.searchMovie(titles(0))
     }
-    movie
+    jade("movies", "movie" ->  movie)
   }
 }

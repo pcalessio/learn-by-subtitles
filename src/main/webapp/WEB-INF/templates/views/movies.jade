@@ -1,22 +1,11 @@
 - attributes("title") = "Welcome to Movie Search"
-- attributes("headline") = "Enter Title"
--@ val imdbId: String
--@ val subtitles: String
+-@ val movie: com.github.fedeoasi.app.model.Movie
+-@ val imageUrl: String = movie.posterUrl
+-@ val imdbId: String = movie.imdbID
+-@ val subsUrl: String = "/subtitles?imdbid=" + imdbId
 
-:javascript
-    function something() {
-        var title = $('#imdbSearchInput').val();
-        if(id.length > 0) {
-            window.location = window.location = "/movies?title=" + title;
-        } else {
-            alert('Inappropriate Value');
-        }
-    }
-
-h1= "Searching subtitles for " + imdbId
-
-#imdbSearch
-    input(id="imdbSearchInput" type="text" name="user")
-    input(type="button" value="Click Me!" onclick="something();")
-
-pre= subtitles
+h1= movie.title
+a(href=subsUrl) Subtitles
+p= movie.year
+p= movie.imdbID
+img(src=imageUrl)
