@@ -1,0 +1,247 @@
+html, body {
+    font-family: "Ruda",Arial,sans-serif;
+    font-size: 20px;
+	margin: 0;
+	background: #aaa;
+	height: 100%;
+}
+
+#content {
+    margin: 0 auto;
+    width: 1000px;
+	background: #ddd;
+	min-height: 100%;
+}
+
+h1 {
+	background: none repeat scroll 0 0 #373737;
+    font-size: 56px;
+    margin-top: 0;
+	margin-bottom: 2px;
+    opacity: 0.9;
+    padding: 7px 0;
+	color: #FFFFFF;
+    text-align: center;
+    width: 100%;
+}
+
+a.menuAction {
+	display: block;
+    background: none repeat scroll 0 0 #F4594F;
+    padding: 20px;
+	float: left;
+	width: 458px;
+	margin-right: 2px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+	text-decoration: none;
+    text-align: center;
+}
+
+.cf:before, .cf:after{
+    content:"";
+    display:table;
+}
+ 
+.cf:after{
+    clear:both;
+}
+ 
+.cf{
+    zoom:1;
+}    
+
+/* Form wrapper styling */
+.form-wrapper {
+    width: 450px;
+    padding: 15px;
+    margin: 30px auto 50px auto;
+    background: #444;
+    background: rgba(0,0,0,.2);
+    border-radius: 10px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
+}
+ 
+/* Form text input */
+ 
+.form-wrapper input {
+    width: 330px;
+    height: 20px;
+    padding: 10px 5px;
+    float: left;   
+    font: bold 15px 'lucida sans', 'trebuchet MS', 'Tahoma';
+    border: 0;
+    background: #eee;
+    border-radius: 3px 0 0 3px;     
+}
+ 
+.form-wrapper input:focus {
+    outline: 0;
+    background: #fff;
+    box-shadow: 0 0 2px rgba(0,0,0,.8) inset;
+}
+ 
+.form-wrapper input::-webkit-input-placeholder {
+   color: #999;
+   font-weight: normal;
+   font-style: italic;
+}
+ 
+.form-wrapper input:-moz-placeholder {
+    color: #999;
+    font-weight: normal;
+    font-style: italic;
+}
+ 
+.form-wrapper input:-ms-input-placeholder {
+    color: #999;
+    font-weight: normal;
+    font-style: italic;
+}   
+ 
+/* Form submit button */
+.form-wrapper button {
+    overflow: visible;
+    position: relative;
+    float: right;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    height: 40px;
+    width: 110px;
+    font: bold 15px/40px 'lucida sans', 'trebuchet MS', 'Tahoma';
+    color: #fff;
+    text-transform: uppercase;
+    background: #d83c3c;
+    border-radius: 0 3px 3px 0;     
+    text-shadow: 0 -1px 0 rgba(0, 0 ,0, .3);
+}  
+   
+.form-wrapper button:hover{    
+    background: #e54040;
+}  
+   
+.form-wrapper button:active,
+.form-wrapper button:focus{  
+    background: #c42f2f;
+    outline: 0;  
+}
+ 
+.form-wrapper button:before { /* left arrow */
+    content: '';
+    position: absolute;
+    border-width: 8px 8px 8px 0;
+    border-style: solid solid solid none;
+    border-color: transparent #d83c3c transparent;
+    top: 12px;
+    left: -6px;
+}
+ 
+.form-wrapper button:hover:before{
+    border-right-color: #e54040;
+}
+ 
+.form-wrapper button:focus:before,
+.form-wrapper button:active:before{
+        border-right-color: #c42f2f;
+}     
+ 
+.form-wrapper button::-moz-focus-inner { /* remove extra button spacing for Mozilla Firefox */
+    border: 0;
+    padding: 0;
+}    
+
+#listTable th {
+    background-color: #F8E1E7;
+    border-bottom: 2px solid #777777;
+    color: #777777;
+    font-size: 18px;
+    font-weight: normal;
+    margin-top: 10px;
+    padding: 10px 8px;
+}
+#listTable {
+}
+#listTable table {
+    border-collapse: collapse;
+    width: 100%;
+}
+#listTable td {
+    color: #555555;
+    padding: 6px 8px;
+    text-align: center;
+}
+#listTable img {
+    border: 1px solid #666666;
+    max-width: 280px;
+}
+ol, ul {
+    list-style-image: none;
+    list-style-type: none;
+}
+.listView .list-item {
+    border-bottom: 1px solid #E5E5E5;
+    height: 125px;
+    padding: 15px 0 15px 135px;
+    position: relative;
+    z-index: 50;
+}
+.listView .list-item .photo {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DFDBD7;
+    display: table;
+    height: 123px;
+    left: 0;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    table-layout: fixed;
+    text-align: center;
+    top: 15px;
+    width: 123px;
+}
+.listView .list-item .photo a {
+    display: table-cell;
+    height: 123px;
+    text-align: center;
+    vertical-align: middle;
+    width: 123px;
+}
+.listView .list-item .photo img {
+    max-height: 123px;
+    max-width: 123px;
+}
+.listView .list-item h3 {
+    width: 160px;
+}
+.listView .list-item h3 {
+    color: #534741;
+    font-size: 14px;
+    margin-bottom: 10px;
+    margin-right: 15px;
+    width: 200px;
+    word-wrap: break-word;
+}
+.listView .attribute {
+    position: absolute;
+    right: 0;
+    top: 15px;
+}
+.listView .attribute li:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.listView .list-item h3 a {
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: normal !important;
+    line-height: 16px;
+}
+.productAttribute {
+    font-family: Arial;
+    font-size: 11px;
+}
+

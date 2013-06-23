@@ -1,22 +1,5 @@
-- attributes("title") = "Welcome to Subtitle Search"
-- attributes("headline") = "Enter IMDB id"
 -@ val imdbId: String
 -@ val subtitles: String
-
-:javascript
-    function something() {
-        var id = $('#imdbSearchInput').val();
-        if(id.length > 0) {
-            window.location = window.location = "/subtitles?imdbid=" + id;
-        } else {
-            alert('Inappropriate Value');
-        }
-    }
-
-h1= "Searching subtitles for " + imdbId
-
-#imdbSearch
-    input(id="imdbSearchInput" type="text" name="user")
-    input(type="button" value="Click Me!" onclick="something();")
+- attributes("title") = "Showing subtitles for " + imdbId
 
 pre= subtitles

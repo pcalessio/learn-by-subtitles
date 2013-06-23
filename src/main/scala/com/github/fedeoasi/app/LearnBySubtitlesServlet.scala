@@ -1,24 +1,22 @@
 package com.github.fedeoasi.app
 
 import model.Movie
+import persistence.ProdPersistenceManager
 
 class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
-
   get("/") {
-    <html>
-      <body>
-        <h1>Learn by Subtitles App</h1>
-          <a href="subtitles">Get subtitles for a given IMDB id</a>.
-      </body>
-    </html>
+    contentType = "text/html"
+    jade("index")
   }
 
   get("/subtitles") {
     contentType = "text/html"
-    val imdbId: String = params("imdbid")
+    val imdbIdParam: Seq[String] = multiParams("imdbid")
     var subtitles: String = ""
+    var imdbId = ""
 
-    if(imdbId != null && imdbId.length > 0) {
+    if(imdbIdParam.size > 0) {
+      imdbId = imdbIdParam(0)
       val searcher = new OpenSubtitlesSearcher()
       subtitles = searcher.searchSubtitles(imdbId)
     }
@@ -33,6 +31,7 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
     var movie = new Movie("", 0, "", "")
     if(titles.size > 0) {
       movie = OmdbApi.searchMovie(titles(0))
+      ProdPersistenceManager().saveMovie(movie)
     }
     jade("movies", "movie" ->  movie)
   }
