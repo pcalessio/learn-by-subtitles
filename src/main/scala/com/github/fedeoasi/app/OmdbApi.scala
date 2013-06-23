@@ -9,7 +9,7 @@ import model.Movie
 import scala.collection.immutable.Range.Int
 import scala._
 
-object ImdbApi {
+object OmdbApi {
   implicit val formats = DefaultFormats
 
   def searchMovieJson(title: String): String = {

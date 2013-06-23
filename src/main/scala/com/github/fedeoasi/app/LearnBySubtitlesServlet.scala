@@ -32,7 +32,7 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
     val titles: Seq[String] = multiParams("title")
     var movie = new Movie("", 0, "", "")
     if(titles.size > 0) {
-      movie = ImdbApi.searchMovie(titles(0))
+      movie = OmdbApi.searchMovie(titles(0))
     }
     jade("movies", "movie" ->  movie)
   }
