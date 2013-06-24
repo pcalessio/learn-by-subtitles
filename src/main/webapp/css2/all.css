@@ -2,7 +2,7 @@ html, body {
     font-family: "Ruda",Arial,sans-serif;
     font-size: 20px;
 	margin: 0;
-	background: #aaa;
+	background: #3A3A3A;
 	height: 100%;
 }
 
@@ -13,11 +13,24 @@ html, body {
 	min-height: 100%;
 }
 
+.violetB {
+    background-color: #7C378A;
+}
+.redB {
+    background-color: #DC0030;
+}
+.yellowB {
+    background-color: #F2B701;
+}
+.blueB {
+    background-color: #3465AA;
+}
+
 h1 {
-	background: none repeat scroll 0 0 #373737;
+	background: none repeat scroll 0 0 #B10058;
     font-size: 56px;
     margin-top: 0;
-	margin-bottom: 2px;
+	margin-bottom: 0px;
     opacity: 0.9;
     padding: 7px 0;
 	color: #FFFFFF;
@@ -27,15 +40,23 @@ h1 {
 
 a.menuAction {
 	display: block;
-    background: none repeat scroll 0 0 #F4594F;
     padding: 20px;
 	float: left;
-	width: 458px;
-	margin-right: 2px;
+	width: 457px;
+	height: 457px;
     text-transform: uppercase;
     color: #FFFFFF;
 	text-decoration: none;
     text-align: center;
+    margin-top: 2px;
+}
+a.menuAction.right{
+	margin-left: 1px;
+	margin-right: 2px;
+}
+a.menuAction.left {
+	margin-right: 1px;
+	margin-left: 2px;
 }
 
 .cf:before, .cf:after{
@@ -152,13 +173,13 @@ a.menuAction {
 }    
 
 #listTable th {
-    background-color: #F8E1E7;
-    border-bottom: 2px solid #777777;
-    color: #777777;
+    background-color: #777;
+    color: #fff;
     font-size: 18px;
     font-weight: normal;
     margin-top: 10px;
     padding: 10px 8px;
+    text-transform: uppercase;
 }
 #listTable {
 }

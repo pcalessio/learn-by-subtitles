@@ -1,0 +1,15 @@
+#search2
+    div(class='form-wrapper cf')
+        input(type='text' id="imdbSearchInput" placeholder='Search here...' required='')
+        button(type='submit' onclick='something();') Search
+
+:javascript
+    function something() {
+        var title = $('#imdbSearchInput').val();
+        if(title.length > 0) {
+            window.location = window.location = "/movies?title=" + title;
+        } else {
+            alert('Inappropriate Value');
+        }
+        return false;
+    }

@@ -28,11 +28,12 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
   get("/movies") {
     contentType = "text/html"
     val titles: Seq[String] = multiParams("title")
-    var movie = new Movie("", 0, "", "")
+    var movieOption: Option[Movie] = None
     if(titles.size > 0) {
-      movie = OmdbApi.searchMovie(titles(0))
+      val movie = OmdbApi.searchMovie(titles(0))
+      movieOption = Some(movie)
       ProdPersistenceManager().saveMovie(movie)
     }
-    jade("movies", "movie" ->  movie)
+    jade("movies", "movie" ->  movieOption)
   }
 }

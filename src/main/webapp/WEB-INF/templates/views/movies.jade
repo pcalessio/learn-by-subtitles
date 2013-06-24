@@ -1,30 +1,23 @@
--@ val movie: com.github.fedeoasi.app.model.Movie
--@ val imageUrl: String = movie.posterUrl
--@ val imdbId: String = movie.imdbID
--@ val subsUrl: String = "/subtitles?imdbid=" + imdbId
-- attributes("title") = movie.title
+-@ val movie: Option[com.github.fedeoasi.app.model.Movie]
+-@ val subsUrlBase: String = "/subtitles?imdbid="
+- if(movie.isDefined) {
+-   attributes("title") = movie.get.title
+- } else {
+-   attributes("title") = "Search movie"
+- }
 
-:javascript
-    function something() {
-        var title = $('#imdbSearchInput').val();
-        if(title.length > 0) {
-            window.location = window.location = "/movies?title=" + title;
-        } else {
-            alert('Inappropriate Value');
-        }
-        return false;
-    }
+- render("search.jade")
 
-#search2
-    div(class='form-wrapper cf')
-        input(type='text' id="imdbSearchInput" placeholder='Search here...' required='')
-        button(type='submit' onclick='something();') Search
-
+- if(movie.isDefined) {
+-   val imdbId = movie.get.imdbID
+-   val year = movie.get.year
+-   val imageUrl = movie.get.posterUrl
+-   val subsUrl = subsUrlBase + imdbId
 #listTable
     table
         thead
             tr
-                th Bla
+                th
                 th Year
                 th ImdbId
                 th Subtitles
@@ -32,7 +25,8 @@
             tr
                 td
                     img(src=imageUrl)
-                td= movie.year
-                td= movie.imdbID
+                td= year
+                td= imdbId
                 td
                     a(href=subsUrl) Subtitles
+- }
