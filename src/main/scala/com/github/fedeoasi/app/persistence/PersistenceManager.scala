@@ -5,10 +5,13 @@ import slick.jdbc.meta.MTable
 import Database.threadLocalSession
 import com.github.fedeoasi.app.model.Movie
 import scala.slick.driver.MySQLDriver.simple._
+import scala.collection.mutable._
+import collection.mutable
 
 trait PersistenceManager {
   def saveMovie(movie: Movie)
   def findMovieById(imdbId: String): Option[Movie]
+  def listMovies(): List[Movie]
 }
 
 abstract class BasePersistenceManager extends PersistenceManager {
@@ -28,6 +31,19 @@ abstract class BasePersistenceManager extends PersistenceManager {
         Movies.forInsert.insert(movie)
       }
     }
+  }
+
+  def listMovies(): List[Movie] = {
+    val movieList = mutable.MutableList[Movie]()
+    database withSession {
+      val q = for {
+        m <- Movies
+      } yield (m)
+      val list = q.list
+      println(list)
+
+    }
+    movieList.toList
   }
 
   def findMovieById(imdbId: String): Option[Movie] = {
