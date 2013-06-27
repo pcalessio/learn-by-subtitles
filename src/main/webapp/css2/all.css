@@ -2,7 +2,7 @@ html, body {
     font-family: "Ruda",Arial,sans-serif;
     font-size: 20px;
 	margin: 0;
-	background: #232323;
+	background: #1a1a1a;
 	height: 100%;
 }
 
@@ -22,6 +22,51 @@ html, body {
 .blueB {
     background-color: #3465AA;
 }
+.violetT {
+    color: #7C378A !important;
+}
+.redT {
+    color: #DC0030 !important;
+}
+.yellowT {
+    color: #F2B701 !important;
+}
+.blueT {
+    color: #3465AA !important;
+}
+
+ul.menu {
+  list-style: none; overflow: hidden; position: relative;
+}
+ul.menu li {
+  float: left; margin: 0 20px 0 0;
+}
+
+ul.menu li a{
+    position:relative;
+    display: block;
+    width: 130px;
+    height: 78px;
+    padding-top: 52px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    text-decoration: none;
+    text-align: center;
+}
+
+ul.menu li a.title {
+    margin-left: 20px;
+    padding-top: 30px;
+    width:auto;
+    font-size: 60px;
+}
+
+ul.menu li a span{
+  top: 55px;
+  left: 30px;
+  position:absolute;
+}
+
 
 h1 {
 	background: none repeat scroll 0 0 #B10058;
@@ -57,57 +102,29 @@ h1 {
     border-radius: 10px;
     box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
 }
- 
+
 /* Form text input */
- 
+
 .form-wrapper input {
     width: 330px;
     height: 20px;
     padding: 10px 5px;
-    float: left;   
+    float: left;
     font: bold 15px 'lucida sans', 'trebuchet MS', 'Tahoma';
     border: 0;
     background: #eee;
-    border-radius: 3px 0 0 3px;     
+    border-radius: 3px 0 0 3px;
 }
- 
 .form-wrapper input:focus {
     outline: 0;
     background: #fff;
     box-shadow: 0 0 2px rgba(0,0,0,.8) inset;
 }
- 
 .form-wrapper input::-webkit-input-placeholder {
    color: #999;
    font-weight: normal;
    font-style: italic;
 }
-
-ul.menu {
-  list-style: none; overflow: hidden; position: relative;
-}
-ul.menu li {
-  float: left; margin: 0 20px 0 0;
-}
-
-ul.menu li a{
-    position:relative;
-    display: block;
-    width: 150px;
-    height: 150px;
-    text-transform: uppercase;
-    color: #FFFFFF;
-    text-decoration: none;
-    text-align: center;
-}
-
-ul.menu li a span{
-  top: 55px;
-  left: 30px;
-  position:absolute;
-}
-
- 
 .form-wrapper input:-moz-placeholder {
     color: #999;
     font-weight: normal;
@@ -181,21 +198,49 @@ ul.menu li a span{
     padding: 10px 8px;
     text-transform: uppercase;
 }
-#listTable {
+
+#moviesTable {
+    margin: 20px;
+    padding: 20px;
 }
-#listTable table {
+
+#moviesTable th {
+    color: #3465AA;
+    font-size: 20px;
+    text-align: left;
+    font-weight: normal;
+    margin-top: 10px;
+    padding: 10px 8px;
+    text-transform: uppercase;
+}
+
+table {
     border-collapse: collapse;
     width: 100%;
 }
-#listTable td {
-    color: #555555;
+#moviesTable td {
+    color: #aaa;
     padding: 6px 8px;
-    text-align: center;
+    text-align: left;
+    margin-top: 50px;
+    border-spacing: 50px;
+}
+#moviesTable td{
+    //background-color: #09AB90;
+}
+#moviesTable .spacer {
+    height: 15px;
 }
 #listTable img {
     border: 1px solid #666666;
     max-width: 280px;
+    background-color: #3465aa;
 }
+#moviesTable img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
 ol, ul {
     list-style-image: none;
     list-style-type: none;

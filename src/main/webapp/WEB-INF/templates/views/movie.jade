@@ -1,0 +1,35 @@
+-@ val movie: Option[com.github.fedeoasi.app.model.Movie]
+-@ val subsUrlBase: String = "/subtitles?imdbid="
+- attributes("titleName") = "Add Movies"
+- attributes("titleClass") = "redT"
+- if(movie.isDefined) {
+-   attributes("title") = movie.get.title
+- } else {
+-   attributes("title") = "Search movie"
+- }
+
+- render("menu.jade")
+- render("search.jade")
+
+- if(movie.isDefined) {
+-   val imdbId = movie.get.imdbID
+-   val year = movie.get.year
+-   val imageUrl = movie.get.posterUrl
+-   val subsUrl = subsUrlBase + imdbId
+#listTable
+    table
+        thead
+            tr
+                th
+                th Year
+                th ImdbId
+                th Subtitles
+        tbody
+            tr
+                td
+                    img(src=imageUrl)
+                td= year
+                td= imdbId
+                td
+                    a(href=subsUrl) Subtitles
+- }

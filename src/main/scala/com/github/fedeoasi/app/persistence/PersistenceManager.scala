@@ -34,16 +34,14 @@ abstract class BasePersistenceManager extends PersistenceManager {
   }
 
   def listMovies(): List[Movie] = {
-    val movieList = mutable.MutableList[Movie]()
     database withSession {
       val q = for {
         m <- Movies
       } yield (m)
-      val list = q.list
-      println(list)
-
+      q.list.map {
+        movie => Movie(movie._1, movie._2, movie._3, movie._4)
+      }.toList
     }
-    movieList.toList
   }
 
   def findMovieById(imdbId: String): Option[Movie] = {

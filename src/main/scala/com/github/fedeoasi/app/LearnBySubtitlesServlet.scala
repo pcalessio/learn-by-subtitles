@@ -37,13 +37,19 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
       movieOption = Some(movie)
       ProdPersistenceManager().saveMovie(movie)
     }
-    jade("movies", "movie" -> movieOption)
+    jade("movie", "movie" -> movieOption)
   }
 
   get("/movies") {
     contentType = "text/html"
-    ProdPersistenceManager().listMovies()
-    jade("movies", "movies" -> "")
+    val movies = ProdPersistenceManager().listMovies()
+    println(movies)
+    jade("movies", "movies" -> movies)
+  }
+
+  get("/history") {
+    contentType = "text/html"
+    jade("history")
   }
 
 //  get("/history") {

@@ -1,15 +1,15 @@
+-@ val titleName: String
+-@ val titleClass: String
 
 #actions
   ul(class="menu")
     li
-      a(href="subtitles" class="menuAction violetB")
-        span Subtitles
+      a(href="subtitles" class="menuAction violetB") Subtitles
     li
-      a(href="movies" class="menuAction redB")
-        span Add Movies
+      a(href="movie" class="menuAction redB") Add Movies
     li
-      a(href="subtitles" class="menuAction yellowB")
-        span History
+      a(href="history" class="menuAction yellowB") History
     li
-      a(href="movies" class="menuAction blueB")
-        span My Movies
+      a(href="movies" class="menuAction blueB") My Movies
+    li
+      a(class="title #{titleClass}")= titleName
