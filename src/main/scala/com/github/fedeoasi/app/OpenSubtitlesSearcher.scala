@@ -6,7 +6,7 @@ import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory
 import java.net.URL
 import java.util.Map
 import java.util.zip.GZIPInputStream
-import java.io.{BufferedOutputStream, OutputStream, ByteArrayOutputStream, ByteArrayInputStream}
+import java.io._
 import org.apache.ws.commons.util.Base64
 import org.apache.commons.io.IOUtils
 import util.Random
@@ -19,7 +19,7 @@ class OpenSubtitlesSearcher {
   val client = new XmlRpcClient();
   client.setTransportFactory(new XmlRpcSunHttpTransportFactory(client));
   client.setConfig(config);
-  var token = login
+  var token = "51l3fd1ik158istgavpn654e15"
 
   def login = {
     val response = client.execute(config, "LogIn", Array[AnyRef]("", "", "", System.getenv(APP_USER_AGENT)))
@@ -43,11 +43,16 @@ class OpenSubtitlesSearcher {
     val dataArray: Array[Object] = responseMap.get("data").asInstanceOf[Array[Object]]
     val index: Int = new Random().nextInt(dataArray.length)
     println("getting subtitle at index " + index)
-    println(dataArray(index).asInstanceOf[java.util.Map[String, String]].keySet())
-    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("LanguageName")))
+    val subtitleMap: Map[String, String] = dataArray(index).asInstanceOf[Map[String, String]]
+    println(subtitleMap.keySet())
+    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("SubRating")))
 
     if (!dataArray.isEmpty) {
-      return downloadSubtitle(dataArray(index).asInstanceOf[Map[String, String]].get("IDSubtitleFile")).asInstanceOf[String]
+      val subtitle: String = downloadSubtitle(subtitleMap.get("IDSubtitleFile"))
+
+      IOUtils.copy(new StringReader(subtitle), new FileOutputStream(
+        subtitleMap.get("IDSubtitle") + ".srt"))
+      return subtitle
     }
     return null
   }

@@ -1,12 +1,15 @@
 package com.github.fedeoasi.app
 
-import model.Movie
+import model.{SubEntry, Movie}
+import parsing.SrtParser
 import persistence.ProdPersistenceManager
 import org.scalatra.DefaultValues._
 import org.scalatra.commands.{Field, ParamsOnlyCommand}
 
 
 class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
+  val parser = new SrtParser()
+
   get("/") {
     contentType = "text/html"
     jade("index")
@@ -15,13 +18,16 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
   get("/subtitles") {
     contentType = "text/html"
     val imdbIdParam: Seq[String] = multiParams("imdbid")
-    var subtitles: String = ""
+    var subtitles = List[SubEntry]()
     var imdbId = ""
 
     if (imdbIdParam.size > 0) {
       imdbId = imdbIdParam(0)
       val searcher = new OpenSubtitlesSearcher()
-      subtitles = searcher.searchSubtitles(imdbId)
+      val subString = searcher.searchSubtitles(imdbId)
+      if (subString != null) {
+        subtitles = parser.parseSrt(subString)
+      }
     }
 
     jade("subtitles", "subtitles" -> subtitles,

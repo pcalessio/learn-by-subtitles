@@ -1,9 +1,25 @@
 -@ val imdbId: String
--@ val subtitles: String
+-@ val subtitles: List[com.github.fedeoasi.app.model.SubEntry]
 - attributes("title") = "Showing subtitles for " + imdbId
 - attributes("titleName") = "Subtitles"
 - attributes("titleClass") = "violetT"
 
 - render("menu.jade")
 
-pre= subtitles
+#moviesTable
+    table
+        thead
+            tr
+                th Number
+                th Start
+                th Stop
+                th Text
+        tbody
+        - for(se <- subtitles) {
+        tr
+            td= {se.number}
+            td= {se.start}
+            td= {se.stop}
+            td= {se.text}
+        tr(class="spacer")
+        - }
