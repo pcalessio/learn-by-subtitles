@@ -23,7 +23,7 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
 
     if (imdbIdParam.size > 0) {
       imdbId = imdbIdParam(0)
-      val searcher = new OpenSubtitlesSearcher()
+      val searcher = OpenSubtitlesSearcher()
       val subString = searcher.searchSubtitles(imdbId)
       if (subString != null) {
         subtitles = parser.parseSrt(subString)

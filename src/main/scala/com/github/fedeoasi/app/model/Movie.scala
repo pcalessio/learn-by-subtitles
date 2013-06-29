@@ -9,3 +9,6 @@ case class Movie(val imdbID: String, val year: Int, val title: String,
 case class SubEntry(val number: Int, val start: Date, val stop: Date,
                     val text: String)
 
+case class Subtitle(val id: String, val imdbId: String)
+
+

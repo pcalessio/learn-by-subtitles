@@ -1,7 +1,7 @@
 package com.github.fedeoasi.app.persistence
 
 import scala.slick.driver.MySQLDriver.simple._
-import com.github.fedeoasi.app.model.Movie
+import com.github.fedeoasi.app.model.{Subtitle, Movie}
 
 object Movies extends Table[(String, Int, String, String)]("movies") {
   def imdbId = column[String]("imdbId", O.PrimaryKey)
@@ -13,5 +13,16 @@ object Movies extends Table[(String, Int, String, String)]("movies") {
     (
       {(imdbId, year, title, posterUrl) => Movie(imdbId, year, imdbId, posterUrl)},
       {movie: Movie => Some((movie.imdbID, movie.year, movie.title, movie.posterUrl))}
+    )
+}
+
+object Subtitles extends Table[(String, String)]("subtitles") {
+  def id = column[String]("id", O.PrimaryKey)
+  def imdbId = column[String]("imdbId")
+  def * = id ~ imdbId
+  def forInsert = id ~ imdbId <>
+    (
+      {(id, imdbId) => Subtitle(id, imdbId)},
+      {subtitle: Subtitle => Some((subtitle.id, subtitle.imdbId))}
     )
 }

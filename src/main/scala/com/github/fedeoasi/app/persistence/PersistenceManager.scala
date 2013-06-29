@@ -3,7 +3,7 @@ package com.github.fedeoasi.app.persistence
 import slick.session.Database
 import slick.jdbc.meta.MTable
 import Database.threadLocalSession
-import com.github.fedeoasi.app.model.Movie
+import com.github.fedeoasi.app.model.{Subtitle, Movie}
 import scala.slick.driver.MySQLDriver.simple._
 import scala.collection.mutable._
 import collection.mutable
@@ -12,6 +12,9 @@ trait PersistenceManager {
   def saveMovie(movie: Movie)
   def findMovieById(imdbId: String): Option[Movie]
   def listMovies(): List[Movie]
+  def saveSubtitle(subtitle: Subtitle)
+  def findSubtitleForMovie(imdbId: String): Option[Subtitle]
+  def findSubtitleById(id: String): Option[Subtitle]
 }
 
 abstract class BasePersistenceManager extends PersistenceManager {
@@ -21,6 +24,8 @@ abstract class BasePersistenceManager extends PersistenceManager {
     database withSession {
       if (!MTable.getTables.list.exists(_.name.name == Movies.tableName))
         Movies.ddl.create
+      if (!MTable.getTables.list.exists(_.name.name == Subtitles.tableName))
+        Subtitles.ddl.create
     }
     println("The database has been initialized")
   }
@@ -53,6 +58,40 @@ abstract class BasePersistenceManager extends PersistenceManager {
       val movies = q.list().map(m => Movie(m._1, m._2, m._3, m._4))
       assert(movies.size <= 1, s"Found more than one entry for a movie with imdbId $imdbId")
       movies.headOption
+    }
+  }
+
+  def findSubtitleById(id: String): Option[Subtitle] = {
+    database withSession {
+      val q = for {
+        s <- Subtitles if s.id === id
+      } yield (s)
+
+      val subtitles = q.list().map(s => Subtitle(s._1, s._2))
+      assert(subtitles.size <= 1, s"Found more than one entry for a subtitle with id $id")
+      subtitles.headOption
+    }
+  }
+
+
+  def saveSubtitle(subtitle: Subtitle) {
+    if (!findSubtitleForMovie(subtitle.imdbId).isDefined
+      && !findSubtitleById(subtitle.id).isDefined) {
+      database withSession {
+        Subtitles.forInsert.insert(subtitle)
+      }
+    }
+  }
+
+  def findSubtitleForMovie(imdbId: String): Option[Subtitle] = {
+    database withSession {
+      val q = for {
+        s <- Subtitles if s.imdbId === imdbId
+      } yield (s)
+
+      val subtitles = q.list().map(s => Subtitle(s._1, s._2))
+      assert(subtitles.size <= 1, s"Found more than one entry for a movie with imdbId $imdbId")
+      subtitles.headOption
     }
   }
 }
