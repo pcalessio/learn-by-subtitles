@@ -9,7 +9,6 @@ import java.util.zip.GZIPInputStream
 import java.io._
 import org.apache.ws.commons.util.Base64
 import org.apache.commons.io.IOUtils
-import util.Random
 
 class OpenSubtitlesSearcher {
   val APP_USER_AGENT = "LBS_USER_AGENT"
@@ -19,11 +18,15 @@ class OpenSubtitlesSearcher {
   val client = new XmlRpcClient();
   client.setTransportFactory(new XmlRpcSunHttpTransportFactory(client));
   client.setConfig(config);
-  var token = "5m73cv8d0p603n8l2i9o88r6n5"
+  var token = login
 
   def login = {
     val response = client.execute(config, "LogIn", Array[AnyRef]("", "", "", System.getenv(APP_USER_AGENT)))
     response.asInstanceOf[Map[String, String]].get("token")
+  }
+
+  def getRating(o: Object): Float = {
+    o.asInstanceOf[Map[String, String]].get("SubRating").toFloat
   }
 
   def searchSubtitles(imdbId: String): String = {
@@ -41,17 +44,20 @@ class OpenSubtitlesSearcher {
       return null
     }
     val dataArray: Array[Object] = responseMap.get("data").asInstanceOf[Array[Object]]
-    val index: Int = new Random().nextInt(dataArray.length)
-    println("getting subtitle at index " + index)
-    val subtitleMap: Map[String, String] = dataArray(index).asInstanceOf[Map[String, String]]
+
+    val sorted = dataArray.sortWith(
+      (o1, o2) => {
+        getRating(o1) > getRating(o2)
+      }
+    )
+    val subtitleMap: Map[String, String] = sorted(0).asInstanceOf[Map[String, String]]
     println(subtitleMap.keySet())
-    dataArray.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("SubRating")))
+//    sorted.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("SubRating")))
 
     if (!dataArray.isEmpty) {
       val subtitle: String = downloadSubtitle(subtitleMap.get("IDSubtitleFile"))
-
       IOUtils.copy(new StringReader(subtitle), new FileOutputStream(
-        subtitleMap.get("IDSubtitle") + ".srt"))
+        subtitleMap.get("subtitleFiles/IDSubtitle") + ".srt"))
       return subtitle
     }
     return null
