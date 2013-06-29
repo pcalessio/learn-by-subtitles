@@ -19,7 +19,12 @@ object OpenSubtitlesSearcher {
   }
 }
 
-class OpenSubtitlesSearcher {
+trait SubtitleSearcher {
+  def searchSubtitles(imdbId: String): String
+  def downloadSubtitle(id: String): String
+}
+
+class OpenSubtitlesSearcher extends SubtitleSearcher {
   val APP_USER_AGENT = "LBS_USER_AGENT"
   val config = new XmlRpcClientConfigImpl()
   val subtitlesFolder = "subtitleFiles"
@@ -123,7 +128,7 @@ class OpenSubtitlesSearcher {
     return stringWriter.toString();
   }
 
-  def downloadSubtitle(id: String) = {
+  def downloadSubtitle(id: String): String = {
     val response = client.execute(config, "DownloadSubtitles", Array[AnyRef](token, Array(id)))
     val responseMap: Map[String, AnyRef] = response.asInstanceOf[Map[String, AnyRef]]
     val dataString = responseMap.get("data").asInstanceOf[Array[Object]](0)

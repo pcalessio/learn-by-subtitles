@@ -2,7 +2,7 @@ html, body {
     font-family: "Ruda",Arial,sans-serif;
     font-size: 20px;
 	margin: 0;
-	background: #1a1a1a;
+	background: #111;
 	height: 100%;
 }
 
@@ -10,30 +10,15 @@ html, body {
 	min-height: 100%;
 }
 
-.violetB {
-    background-color: #7C378A;
-}
-.redB {
-    background-color: #DC0030;
-}
-.yellowB {
-    background-color: #F2B701;
-}
-.blueB {
-    background-color: #3465AA;
-}
-.violetT {
-    color: #7C378A !important;
-}
-.redT {
-    color: #DC0030 !important;
-}
-.yellowT {
-    color: #F2B701 !important;
-}
-.blueT {
-    color: #3465AA !important;
-}
+.violetB { background-color: #7627A8; }
+.redB { background-color: #D41414; }
+.yellowB { background-color: #F1C205; }
+.blueB { background-color: #048FAD; }
+
+.violetT { color: #7627A8 !important; }
+.redT { color: #D41414 !important; }
+.yellowT { color: #F1C205 !important; }
+.blueT { color: #048FAD !important; }
 
 ul.menu {
   list-style: none; overflow: hidden; position: relative;
@@ -66,7 +51,6 @@ ul.menu li a span{
   left: 30px;
   position:absolute;
 }
-
 
 h1 {
 	background: none repeat scroll 0 0 #B10058;
