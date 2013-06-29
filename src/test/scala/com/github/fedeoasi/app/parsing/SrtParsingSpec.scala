@@ -18,6 +18,8 @@ class SrtParsingSpec extends FunSpec with ShouldMatchers {
       val entries = parser.parseSrt(input)
       entries.size should be(813)
       entries(0).text should be("\r\nWaft your waves, ye waters!\r\nCarry your crests to the cradle!")
+      entries(0).number should be(1)
+      entries(812).number should be(813)
       entries(812).text should be("\r\nFalse and faint-hearted\r\nare those who revel above!")
     }
   }

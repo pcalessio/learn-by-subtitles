@@ -21,21 +21,23 @@ class SrtParser {
     // Any chance to get rid of the imperative style code without
     // Having to read the entire file at once?
     val entries = mutable.MutableList[SubEntry]()
+    var num = 1
     while (sc.hasNext) {
       val line = sc.next()
-      entries += readEntry(line)
+      entries += readEntry(num, line)
+      num += 1
     }
     sc.close()
     entries.toList
   }
 
-  private def readEntry(string: String)= {
+  private def readEntry(num: Int, string: String)= {
     val sc = new Scanner(string)
     sc.nextLine // Skip original id
     val start = timeFormat.parse(sc.findInLine(timePattern))
     val end = timeFormat.parse(sc.findInLine(timePattern))
     sc.useDelimiter("\\Z")
     val text = sc.next()
-    SubEntry(0, start, end, text)
+    SubEntry(num, start, end, text)
   }
 }

@@ -19,7 +19,7 @@ class OpenSubtitlesSearcher {
   val client = new XmlRpcClient();
   client.setTransportFactory(new XmlRpcSunHttpTransportFactory(client));
   client.setConfig(config);
-  var token = "51l3fd1ik158istgavpn654e15"
+  var token = "5m73cv8d0p603n8l2i9o88r6n5"
 
   def login = {
     val response = client.execute(config, "LogIn", Array[AnyRef]("", "", "", System.getenv(APP_USER_AGENT)))
