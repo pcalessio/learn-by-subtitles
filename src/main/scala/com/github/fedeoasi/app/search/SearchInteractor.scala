@@ -12,20 +12,27 @@ import java.text.SimpleDateFormat
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.index.query.QueryBuilders
 import scala.collection.JavaConversions._
+import org.elasticsearch.client.transport.TransportClient
+import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.action.get.{MultiGetItemResponse, MultiGetResponse}
+import java.util
 
 trait SearchInteractor {
   def ensureIndexExists(name: String): Boolean
   def indexSubtitleEntry(index: String, entry: SubEntry, subtitleId: String, imdbId: String, flush: Boolean): Boolean
   def indexSubtitleEntries(index: String, entries: List[SubEntry], s1: String, s2: String): Boolean
-  def searchSubtitles(index: String, query: String): List[SubEntry]
-  def getSubtitleEntries(index: String, ids: List[String]): List[SubEntry]
+  def searchSubtitles(index: String, query: String): List[SubtitleSearchResult]
+  def getSubtitleEntries(index: String, ids: List[String], scores: List[Float]): List[SubtitleSearchResult]
   def deleteIndex(name: String)
   def close()
 }
 
 class ElasticSearchInteractor extends SearchInteractor{
-  val node = nodeBuilder().client(false).clusterName("lbs").node()
-  var client = node.client()
+//  val node = nodeBuilder().client(false).clusterName("lbs").node()
+  val settings = ImmutableSettings.settingsBuilder()
+    .put("cluster.name", "lbs").build();
+  val client = new TransportClient(settings)
+    .addTransportAddress(new InetSocketTransportAddress("localhost", 9300))
   val format = new SimpleDateFormat("HH:mm:ss,SSS")
 
   def ensureIndexExists(name: String): Boolean = {
@@ -38,7 +45,7 @@ class ElasticSearchInteractor extends SearchInteractor{
     }
 
     val indexSettings = ImmutableSettings.settingsBuilder()
-      .put("number_of_shards", 2) .put("number_of_replicas", 2).build();
+      .put("number_of_shards", 1) .put("number_of_replicas", 0).build();
 
     val createIndexBuilder = indicesClient.prepareCreate(name);
     createIndexBuilder.setSettings(indexSettings);
@@ -73,7 +80,7 @@ class ElasticSearchInteractor extends SearchInteractor{
     true
   }
 
-  def searchSubtitles(index: String, query: String): List[SubEntry] = {
+  def searchSubtitles(index: String, query: String): List[SubtitleSearchResult] = {
     val response = client.prepareSearch(index)
       .setTypes("entry")
       .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -83,10 +90,13 @@ class ElasticSearchInteractor extends SearchInteractor{
     val ids = response.getHits.map(
       hit => hit.getId
     )
+    val scores = response.getHits.map(
+      hit => hit.getScore
+    )
     if(ids.isEmpty) {
-      List[SubEntry]()
+      List[SubtitleSearchResult]()
     } else {
-      getSubtitleEntries(index, ids.toList).toList
+      getSubtitleEntries(index, ids.toList, scores.toList).toList
     }
   }
 
@@ -101,20 +111,25 @@ class ElasticSearchInteractor extends SearchInteractor{
     deleteIndexResponse.isAcknowledged
   }
 
-  def getSubtitleEntries(index: String, ids: List[String]): List[SubEntry] = {
-    val response = client.prepareMultiGet().add(index, "entry", ids).execute().actionGet()
-    val entries = response.iterator().map(
-      r => mapToSubtitleEntry(r.getResponse.getSourceAsMap())
+  def getSubtitleEntries(index: String, ids: List[String], scores: List[Float]): List[SubtitleSearchResult] = {
+    val response: MultiGetResponse = client.prepareMultiGet().add(index, "entry", ids).execute().actionGet()
+    val getResponseIterator: util.Iterator[MultiGetItemResponse] = response.iterator()
+    //mapToSubtitleEntry(r.getResponse.getSourceAsMap())
+    val entries = getResponseIterator.zip(scores.iterator).map(
+      e => mapToSubtitleEntry(e._1.getResponse.getSourceAsMap(), e._2)
     )
     entries.toList
   }
 
-  def mapToSubtitleEntry(entryMap: java.util.Map[String, Object]): SubEntry = {
-    SubEntry(entryMap.get("number").asInstanceOf[Int],
+  def mapToSubtitleEntry(entryMap: java.util.Map[String, Object], score: Float): SubtitleSearchResult = {
+    val entry: SubEntry = SubEntry(entryMap.get("number").asInstanceOf[Int],
       format.parse(entryMap.get("start").asInstanceOf[String]),
       format.parse(entryMap.get("stop").asInstanceOf[String]),
       entryMap.get("text").asInstanceOf[String])
+    SubtitleSearchResult(entry, entryMap.get("subtitleId").asInstanceOf[String],
+      entryMap.get("movieId").asInstanceOf[String], score)
   }
 }
 
-case class SearchResult(id: String)
+case class SubtitleSearchResult(entry: SubEntry, subtitleId: String, movieId: String,
+                                score: Float)
