@@ -10,10 +10,10 @@ html, body {
 	min-height: 100%;
 }
 
-.violetB { background-color: #7627A8; }
-.redB { background-color: #D41414; }
-.yellowB { background-color: #F1C205; }
-.blueB { background-color: #048FAD; }
+.violetB { background-color: #7627A8 !important; }
+.redB { background-color: #D41414 !important; }
+.yellowB { background-color: #F1C205 !important; }
+.blueB { background-color: #048FAD !important; }
 
 .violetT { color: #7627A8 !important; }
 .redT { color: #D41414 !important; }
@@ -26,7 +26,6 @@ ul.menu {
 ul.menu li {
   float: left; margin: 0 20px 0 0;
 }
-
 ul.menu li a{
     position:relative;
     display: block;
@@ -38,14 +37,12 @@ ul.menu li a{
     text-decoration: none;
     text-align: center;
 }
-
 ul.menu li a.title {
     margin-left: 20px;
     padding-top: 30px;
     width:auto;
     font-size: 60px;
 }
-
 ul.menu li a span{
   top: 55px;
   left: 30px;
@@ -68,14 +65,12 @@ h1 {
     content:"";
     display:table;
 }
- 
 .cf:after{
     clear:both;
 }
 .cf{
     zoom:1;
 }    
-
 /* Form wrapper styling */
 .form-wrapper {
     width: 450px;
@@ -86,9 +81,7 @@ h1 {
     border-radius: 10px;
     box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
 }
-
 /* Form text input */
-
 .form-wrapper input {
     width: 330px;
     height: 20px;
@@ -182,38 +175,56 @@ h1 {
     padding: 10px 8px;
     text-transform: uppercase;
 }
-
 #moviesTable {
     margin: 20px;
     padding: 20px;
 }
-
 #moviesTable th {
-    color: #3465AA;
-    font-size: 20px;
-    text-align: left;
+    color: #048FAD;
+    font-size: 25px;
+    text-align: center;
     font-weight: normal;
     margin-top: 10px;
     padding: 10px 8px;
     text-transform: uppercase;
 }
-
+#moviesTable .title {
+    text-align: left;
+}
 table {
-    border-collapse: collapse;
+    //border-collapse: collapse;
     width: 100%;
 }
 #moviesTable td {
-    color: #aaa;
+    background-color: #171717;
+    color: #bbb;
     padding: 6px 8px;
-    text-align: left;
+    text-align: center;
     margin-top: 50px;
     border-spacing: 50px;
+    //border: 2px solid #aaa;
+    //border-top: 1px solid #048FAD;
+    //border-bottom: 1px solid #048FAD;
 }
-#moviesTable td{
-    //background-color: #09AB90;
+#moviesTable td.first {
+    //border-left: 1px solid #048FAD;
+}
+#moviesTable td.last {
+    border-right: 1px solid #048FAD;
+    width: 120px;
 }
 #moviesTable .spacer {
-    height: 15px;
+    height: 3px;
+}
+#moviesTable a {
+    display: block;
+    text-decoration: none;
+    text-transform: uppercase;
+    text-align: center;
+    color: #ccc
+}
+#moviesTable .image {
+    text-align: center;
 }
 #listTable img {
     border: 1px solid #666666;
@@ -222,7 +233,7 @@ table {
 }
 #moviesTable img {
     max-width: 100px;
-    max-height: 100px;
+    max-height: 85px;
 }
 
 ol, ul {

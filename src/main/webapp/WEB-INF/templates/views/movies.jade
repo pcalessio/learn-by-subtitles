@@ -11,19 +11,19 @@
         thead
             tr
                 th
-                th Title
+                th(class="title") Title
                 th Year
                 th ImdbId
                 th Subtitles
         tbody
         - for(movie <- movies) {
         tr
-            td
+            td(class="first image")
                 img(src={movie.posterUrl})
-            td= {movie.title}
+            td(class="title")= {movie.title}
             td= {movie.year}
             td= {movie.imdbID}
-            td
+            td(class="blueB last")
                 a(href={subsUrlBase + movie.imdbID}) Subtitles
         tr(class="spacer")
         - }
