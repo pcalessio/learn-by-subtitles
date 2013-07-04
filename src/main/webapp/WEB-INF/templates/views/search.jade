@@ -1,15 +1,24 @@
-#search2
-    div(class='form-wrapper cf')
-        input(type='text' id="imdbSearchInput" placeholder='Search here...' required='')
-        button(type='submit' onclick='something();') Search
+-@ val results: List[com.github.fedeoasi.app.search.SubtitleSearchResult]
+-@ val subsUrlBase: String = "/subtitles?imdbid="
+- attributes("title") = "Search through subtitles"
+- attributes("titleName") = "Search"
+- attributes("titleClass") = "violetT"
+- render("menu.jade")
 
-:javascript
-    function something() {
-        var title = $('#imdbSearchInput').val();
-        if(title.length > 0) {
-            window.location = window.location = "/movie?title=" + title;
-        } else {
-            alert('Inappropriate Value');
-        }
-        return false;
-    }
+- if(!results.isEmpty) {
+#moviesTable
+    table
+        thead
+            tr
+                th SubtitleId
+                th MovieId
+                th Score
+        tbody
+        - for(result <- results) {
+        tr
+            td= {result.subtitleId}
+            td= {result.movieId}
+            td= {result.score}
+        tr(class="spacer")
+        - }
+- }

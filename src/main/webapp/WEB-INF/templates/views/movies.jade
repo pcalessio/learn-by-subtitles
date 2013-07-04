@@ -6,6 +6,7 @@
 -@ val movies: List[com.github.fedeoasi.app.model.Movie]
 -@ val subsUrlBase: String = "/subtitles?imdbid="
 
+- if(!movies.isEmpty) {
 #moviesTable
     table
         thead
@@ -27,3 +28,4 @@
                 a(href={subsUrlBase + movie.imdbID}) Subtitles
         tr(class="spacer")
         - }
+- }

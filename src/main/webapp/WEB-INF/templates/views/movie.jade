@@ -1,5 +1,6 @@
 -@ val movie: Option[com.github.fedeoasi.app.model.Movie]
 -@ val subsUrlBase: String = "/subtitles?imdbid="
+- attributes("newLocation") = "/movie?title="
 - attributes("titleName") = "Add Movies"
 - attributes("titleClass") = "redT"
 - if(movie.isDefined) {
@@ -9,7 +10,7 @@
 - }
 
 - render("menu.jade")
-- render("search.jade")
+- render("searchBox.jade")
 
 - if(movie.isDefined) {
 -   val imdbId = movie.get.imdbID

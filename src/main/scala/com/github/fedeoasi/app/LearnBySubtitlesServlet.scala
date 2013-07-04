@@ -5,6 +5,7 @@ import parsing.SrtParser
 import persistence.ProdPersistenceManager
 import org.scalatra.DefaultValues._
 import org.scalatra.commands.{Field, ParamsOnlyCommand}
+import search.{SubtitleSearchResult, ElasticSearchInteractor}
 
 
 class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
@@ -13,6 +14,18 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
   get("/") {
     contentType = "text/html"
     jade("index")
+  }
+
+  get("/search") {
+    contentType = "text/html"
+    val querySeq: Seq[String] = multiParams("query")
+    var results: List[SubtitleSearchResult] = List[SubtitleSearchResult]()
+    if (querySeq.size > 0) {
+      val query = querySeq(0)
+      val searcher = new ElasticSearchInteractor()
+      results = searcher.searchSubtitles(Config.indexName, query)
+    }
+    jade("search", "results" -> results)
   }
 
   get("/subtitles") {
@@ -58,14 +71,14 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
     jade("history")
   }
 
-//  get("/history") {
-//    val command = new HistoryCommand()
-//    command.apply[String](
-//      (c) => {
-//        "Hello"
-//      }
-//    )
-//  }
+  //  get("/history") {
+  //    val command = new HistoryCommand()
+  //    command.apply[String](
+  //      (c) => {
+  //        "Hello"
+  //      }
+  //    )
+  //  }
 }
 
 class HistoryCommand extends ParamsOnlyCommand {

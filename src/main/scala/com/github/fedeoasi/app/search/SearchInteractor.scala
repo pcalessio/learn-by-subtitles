@@ -1,6 +1,5 @@
 package com.github.fedeoasi.app.search
 
-import org.elasticsearch.node.NodeBuilder._
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
 import org.elasticsearch.action.admin.indices.create.{CreateIndexResponse, CreateIndexRequest}
 import org.elasticsearch.client.IndicesAdminClient
@@ -16,13 +15,15 @@ import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.action.get.{MultiGetItemResponse, MultiGetResponse}
 import java.util
+import org.elasticsearch.search.SearchHit
 
 trait SearchInteractor {
   def ensureIndexExists(name: String): Boolean
   def indexSubtitleEntry(index: String, entry: SubEntry, subtitleId: String, imdbId: String, flush: Boolean): Boolean
   def indexSubtitleEntries(index: String, entries: List[SubEntry], s1: String, s2: String): Boolean
+  def searchSubtitleEntries(index: String, query: String): List[SubEntrySearchResult]
   def searchSubtitles(index: String, query: String): List[SubtitleSearchResult]
-  def getSubtitleEntries(index: String, ids: List[String], scores: List[Float]): List[SubtitleSearchResult]
+  def getSubtitleEntries(index: String, ids: List[String], scores: List[Float]): List[SubEntrySearchResult]
   def deleteIndex(name: String)
   def close()
 }
@@ -78,12 +79,30 @@ class ElasticSearchInteractor extends SearchInteractor{
     )
     client.admin().indices().prepareFlush(index).execute().actionGet()
     true
+
+  }
+  def indexSubtitleContent(index: String, text: String, subtitleId: String, movieId: String, flush: Boolean): Boolean = {
+    val json = (
+      ("subtitleId" -> subtitleId) ~
+      ("movieId" -> movieId) ~
+      ("text" -> text)
+    )
+    val response = client.prepareIndex(index, "subtitle")
+      .setSource(compact(render(json)))
+      .execute()
+      .actionGet();
+    if(flush) {
+      client.admin().indices().prepareFlush(index).execute().actionGet()
+    }
+    response.getId != null
+    true
   }
 
-  def searchSubtitles(index: String, query: String): List[SubtitleSearchResult] = {
+  def searchSubtitleEntries(index: String, query: String): List[SubEntrySearchResult] = {
     val response = client.prepareSearch(index)
       .setTypes("entry")
       .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+      .addHighlightedField("text", 0, 0)
       .setQuery(QueryBuilders.termQuery("text", query))
       .execute()
       .actionGet()
@@ -94,10 +113,32 @@ class ElasticSearchInteractor extends SearchInteractor{
       hit => hit.getScore
     )
     if(ids.isEmpty) {
-      List[SubtitleSearchResult]()
+      List[SubEntrySearchResult]()
     } else {
       getSubtitleEntries(index, ids.toList, scores.toList).toList
     }
+  }
+
+  def searchSubtitles(index: String, query: String): List[SubtitleSearchResult] = {
+    val response = client.prepareSearch(index)
+      .setTypes("subtitle")
+      .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+      .addField("subtitleId")
+      .addField("movieId")
+      .addHighlightedField("text", 0, 0)
+      .setQuery(QueryBuilders.termQuery("text", query))
+      .execute()
+      .actionGet()
+    val hits = response.getHits()
+    hits.map(
+      hit => SubtitleSearchResult(hit.getHighlightFields().get("text").getFragments().toString(),
+        extractStringField(hit, "subtitleId"), extractStringField(hit, "movieId"),
+        hit.getScore()
+      )).toList
+  }
+
+  def extractStringField(hit: SearchHit, key: String): String = {
+    hit.getFields().get(key).getValue.toString()
   }
 
   def close() {
@@ -111,7 +152,7 @@ class ElasticSearchInteractor extends SearchInteractor{
     deleteIndexResponse.isAcknowledged
   }
 
-  def getSubtitleEntries(index: String, ids: List[String], scores: List[Float]): List[SubtitleSearchResult] = {
+  def getSubtitleEntries(index: String, ids: List[String], scores: List[Float]): List[SubEntrySearchResult] = {
     val response: MultiGetResponse = client.prepareMultiGet().add(index, "entry", ids).execute().actionGet()
     val getResponseIterator: util.Iterator[MultiGetItemResponse] = response.iterator()
     //mapToSubtitleEntry(r.getResponse.getSourceAsMap())
@@ -121,15 +162,18 @@ class ElasticSearchInteractor extends SearchInteractor{
     entries.toList
   }
 
-  def mapToSubtitleEntry(entryMap: java.util.Map[String, Object], score: Float): SubtitleSearchResult = {
+  def mapToSubtitleEntry(entryMap: java.util.Map[String, Object], score: Float): SubEntrySearchResult = {
     val entry: SubEntry = SubEntry(entryMap.get("number").asInstanceOf[Int],
       format.parse(entryMap.get("start").asInstanceOf[String]),
       format.parse(entryMap.get("stop").asInstanceOf[String]),
       entryMap.get("text").asInstanceOf[String])
-    SubtitleSearchResult(entry, entryMap.get("subtitleId").asInstanceOf[String],
+    SubEntrySearchResult(entry, entryMap.get("subtitleId").asInstanceOf[String],
       entryMap.get("movieId").asInstanceOf[String], score)
   }
 }
 
-case class SubtitleSearchResult(entry: SubEntry, subtitleId: String, movieId: String,
+case class SubEntrySearchResult(entry: SubEntry, subtitleId: String, movieId: String,
+                                score: Float)
+
+case class SubtitleSearchResult(highlightedText: String, subtitleId: String, movieId: String,
                                 score: Float)

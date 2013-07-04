@@ -11,6 +11,7 @@ import java.io._
 import org.apache.ws.commons.util.Base64
 import org.apache.commons.io.IOUtils
 import persistence.ProdPersistenceManager
+import com.github.fedeoasi.app.utils.Utils.readFile
 
 object OpenSubtitlesSearcher {
   lazy val INSTANCE = new OpenSubtitlesSearcher();
@@ -120,12 +121,6 @@ class OpenSubtitlesSearcher extends SubtitleSearcher {
         return null
       }
     }
-  }
-
-  def readFile(path: String): String = {
-    val stringWriter: StringWriter = new StringWriter();
-    IOUtils.copy(new FileInputStream(new File(path)), stringWriter);
-    return stringWriter.toString();
   }
 
   def downloadSubtitle(id: String): String = {
