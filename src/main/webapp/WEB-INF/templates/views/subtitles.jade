@@ -21,6 +21,7 @@
             td= {se.number}
             td= {timeFormat.format(se.start)}
             td= {timeFormat.format(se.stop)}
-            td= {se.text}
+            td
+                ! #{se.text}
         tr(class="spacer")
         - }

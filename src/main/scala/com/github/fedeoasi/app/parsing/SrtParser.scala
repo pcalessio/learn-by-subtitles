@@ -1,5 +1,5 @@
 package com.github.fedeoasi.app.parsing
-import java.io.{ByteArrayInputStream, PrintWriter, InputStream}
+import java.io.{ByteArrayInputStream, InputStream}
 import java.util.Scanner
 import java.util.regex.Pattern
 import java.text.SimpleDateFormat
