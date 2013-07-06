@@ -133,7 +133,7 @@ class ElasticSearchInteractor extends SearchInteractor{
       .actionGet()
     val hits = response.getHits()
     hits.map(
-      hit => SubtitleSearchResult(hit.getHighlightFields().get("text").getFragments().toString(),
+      hit => SubtitleSearchResult(hit.getHighlightFields().get("text").getFragments()(0).string(),
         extractStringField(hit, "subtitleId"), extractStringField(hit, "movieId"),
         hit.getScore()
       )).toList

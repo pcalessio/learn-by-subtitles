@@ -1,4 +1,5 @@
 -@ val results: List[com.github.fedeoasi.app.search.SubtitleSearchResult]
+-@ val subtitleList: List[List[com.github.fedeoasi.app.model.SubEntry]]
 -@ val subsUrlBase: String = "/subtitles?imdbid="
 - attributes("newLocation") = "/search?query="
 - attributes("title") = "Search through subtitles"
@@ -8,8 +9,8 @@
 - render("searchBox.jade")
 
 - if(!results.isEmpty) {
-#moviesTable
-    table
+#resultsTable.standardTableDiv
+    table(class="standardTable")
         thead
             tr
                 th SubtitleId
@@ -24,3 +25,10 @@
         tr(class="spacer")
         - }
 - }
+
+#subtitlesTable.standardTableDiv
+    - if(!subtitleList.isEmpty) {
+    -   attributes("subtitles") = subtitleList(0)
+    -   render("subtitlesTableDiv.jade")
+    - }
+

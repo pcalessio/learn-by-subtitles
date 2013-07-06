@@ -20,12 +20,18 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
     contentType = "text/html"
     val querySeq: Seq[String] = multiParams("query")
     var results: List[SubtitleSearchResult] = List[SubtitleSearchResult]()
+    var subtitles: List[List[SubEntry]] = List[List[SubEntry]]()
     if (querySeq.size > 0) {
       val query = querySeq(0)
       val searcher = new ElasticSearchInteractor()
       results = searcher.searchSubtitles(Config.indexName, query)
+      subtitles = results.map(
+        result => {
+          parser.parseSrt(result.highlightedText)
+        }
+      )
     }
-    jade("search", "results" -> results)
+    jade("search", "results" -> results, "subtitleList" -> subtitles)
   }
 
   get("/subtitles") {
