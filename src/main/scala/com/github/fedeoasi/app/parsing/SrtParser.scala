@@ -15,7 +15,15 @@ class SrtParser {
     return parseSrt(new ByteArrayInputStream(input.getBytes()))
   }
 
+  def parseSrt(input: String, onlyHighlighted: Boolean): List[SubEntry] = {
+    return parseSrt(new ByteArrayInputStream(input.getBytes()), onlyHighlighted)
+  }
+
   def parseSrt(input: InputStream): List[SubEntry] = {
+    parseSrt(input, false)
+  }
+
+  def parseSrt(input: InputStream, onlyHighlighted: Boolean): List[SubEntry] = {
     val sc = new Scanner(input)
     sc.useDelimiter("\n\r\n");
     // Any chance to get rid of the imperative style code without
@@ -24,20 +32,36 @@ class SrtParser {
     var num = 1
     while (sc.hasNext) {
       val line = sc.next()
-      entries += readEntry(num, line)
+      val entry: Option[SubEntry] = readEntry(num, line, onlyHighlighted)
+      entry match {
+        case Some(x) => entries += x
+        case None =>
+      }
       num += 1
     }
     sc.close()
     entries.toList
   }
 
-  private def readEntry(num: Int, string: String)= {
-    val sc = new Scanner(string)
-    sc.nextLine // Skip original id
-    val start = timeFormat.parse(sc.findInLine(timePattern))
-    val end = timeFormat.parse(sc.findInLine(timePattern))
-    sc.useDelimiter("\\Z")
-    val text = sc.next()
-    SubEntry(num, start, end, text)
+  private def readEntry(num: Int, string: String, onlyHighlighted: Boolean): Option[SubEntry] = {
+    try {
+      if(string.matches("^[\r\n]+$")) {
+        return None
+      }
+      val sc = new Scanner(string)
+      sc.nextLine
+      val start = timeFormat.parse(sc.findInLine(timePattern))
+      val end = timeFormat.parse(sc.findInLine(timePattern))
+      sc.useDelimiter("\\Z")
+      val text = sc.next()
+      if(onlyHighlighted && !text.contains("<em>")) {
+        None
+      } else {
+        Some(SubEntry(num, start, end, text))
+      }
+    } catch {
+      case t: Throwable => println("Exception while processing string: " + string + " " + t.getStackTrace)
+      None
+    }
   }
 }

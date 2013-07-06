@@ -159,6 +159,10 @@ h1 {
     background-color: #3465aa;
 }
 
+table.standardTable em {
+    color: #D41414;
+}
+
 .standardTableDiv {
     margin: 20px;
     padding: 20px;

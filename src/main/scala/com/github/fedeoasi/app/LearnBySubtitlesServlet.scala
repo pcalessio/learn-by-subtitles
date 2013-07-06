@@ -27,7 +27,7 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
       results = searcher.searchSubtitles(Config.indexName, query)
       subtitles = results.map(
         result => {
-          parser.parseSrt(result.highlightedText)
+          parser.parseSrt(result.highlightedText, true)
         }
       )
     }
@@ -76,15 +76,6 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
     contentType = "text/html"
     jade("history")
   }
-
-  //  get("/history") {
-  //    val command = new HistoryCommand()
-  //    command.apply[String](
-  //      (c) => {
-  //        "Hello"
-  //      }
-  //    )
-  //  }
 }
 
 class HistoryCommand extends ParamsOnlyCommand {

@@ -28,7 +28,9 @@
 
 #subtitlesTable.standardTableDiv
     - if(!subtitleList.isEmpty) {
-    -   attributes("subtitles") = subtitleList(0)
-    -   render("subtitlesTableDiv.jade")
+    -   for(subtitles <- subtitleList) {
+    -     attributes("subtitles") = subtitles
+    -     render("subtitlesTableDiv.jade")
+    -   }
     - }
 
