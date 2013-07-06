@@ -23,6 +23,7 @@ object OpenSubtitlesSearcher {
 trait SubtitleSearcher {
   def searchSubtitles(imdbId: String): String
   def downloadSubtitle(id: String): String
+  def getSubtitleText(existingSubtitle: Option[Subtitle]): String
 }
 
 class OpenSubtitlesSearcher extends SubtitleSearcher {
@@ -78,7 +79,7 @@ class OpenSubtitlesSearcher extends SubtitleSearcher {
   def searchSubtitles(imdbId: String): String = {
     val existingSubtitle = ProdPersistenceManager().findSubtitleForMovie(imdbId)
     existingSubtitle match {
-      case Some(_) => readFile(getSubtitleFileLocation(existingSubtitle.get.id))
+      case Some(_) => getSubtitleText(existingSubtitle)
       case None => {
         val cleanId = cleanImdbId(imdbId)
         println(token)
@@ -121,6 +122,11 @@ class OpenSubtitlesSearcher extends SubtitleSearcher {
         return null
       }
     }
+  }
+
+
+  def getSubtitleText(existingSubtitle: Option[Subtitle]): String = {
+    readFile(getSubtitleFileLocation(existingSubtitle.get.id))
   }
 
   def downloadSubtitle(id: String): String = {

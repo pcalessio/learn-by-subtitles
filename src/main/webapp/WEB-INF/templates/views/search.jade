@@ -1,9 +1,11 @@
 -@ val results: List[com.github.fedeoasi.app.search.SubtitleSearchResult]
 -@ val subsUrlBase: String = "/subtitles?imdbid="
+- attributes("newLocation") = "/search?query="
 - attributes("title") = "Search through subtitles"
 - attributes("titleName") = "Search"
 - attributes("titleClass") = "violetT"
 - render("menu.jade")
+- render("searchBox.jade")
 
 - if(!results.isEmpty) {
 #moviesTable

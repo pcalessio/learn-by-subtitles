@@ -15,6 +15,8 @@ trait PersistenceManager {
   def saveSubtitle(subtitle: Subtitle)
   def findSubtitleForMovie(imdbId: String): Option[Subtitle]
   def findSubtitleById(id: String): Option[Subtitle]
+  def findSubtitlesToIndex(): List[Subtitle]
+  def markSubtitleAsIndexed(subId: String)
 }
 
 abstract class BasePersistenceManager extends PersistenceManager {
@@ -22,12 +24,30 @@ abstract class BasePersistenceManager extends PersistenceManager {
 
   def initializeDatabase() {
     database withSession {
+      Movies.ddl.createStatements.foreach(println)
       if (!MTable.getTables.list.exists(_.name.name == Movies.tableName))
         Movies.ddl.create
       if (!MTable.getTables.list.exists(_.name.name == Subtitles.tableName))
         Subtitles.ddl.create
     }
     println("The database has been initialized")
+  }
+
+  def findSubtitlesToIndex(): List[Subtitle] = {
+    database withSession {
+      val q = for {
+        s <- Subtitles if s.indexed === false
+      } yield (s)
+
+      q.list().map(s => Subtitle(s._1, s._2)).toList
+    }
+  }
+
+  def markSubtitleAsIndexed(subId: String) {
+    database withSession {
+      val q = for(s <- Subtitles if s.id is subId) yield s.indexed
+      q.update(true)
+    }
   }
 
   def saveMovie(movie: Movie) {

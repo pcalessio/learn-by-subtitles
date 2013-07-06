@@ -19,12 +19,14 @@ import org.elasticsearch.search.SearchHit
 
 trait SearchInteractor {
   def ensureIndexExists(name: String): Boolean
+  def indexSubtitleContent(index: String, text: String, subtitleId: String, movieId: String, flush: Boolean): Boolean
   def indexSubtitleEntry(index: String, entry: SubEntry, subtitleId: String, imdbId: String, flush: Boolean): Boolean
   def indexSubtitleEntries(index: String, entries: List[SubEntry], s1: String, s2: String): Boolean
   def searchSubtitleEntries(index: String, query: String): List[SubEntrySearchResult]
   def searchSubtitles(index: String, query: String): List[SubtitleSearchResult]
   def getSubtitleEntries(index: String, ids: List[String], scores: List[Float]): List[SubEntrySearchResult]
   def deleteIndex(name: String)
+  def flushIndex(name: String)
   def close()
 }
 
@@ -169,6 +171,10 @@ class ElasticSearchInteractor extends SearchInteractor{
       entryMap.get("text").asInstanceOf[String])
     SubEntrySearchResult(entry, entryMap.get("subtitleId").asInstanceOf[String],
       entryMap.get("movieId").asInstanceOf[String], score)
+  }
+
+  def flushIndex(name: String) {
+    client.admin().indices().prepareFlush(name).execute().actionGet()
   }
 }
 

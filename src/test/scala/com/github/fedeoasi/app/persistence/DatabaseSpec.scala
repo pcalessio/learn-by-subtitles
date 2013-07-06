@@ -60,6 +60,22 @@ class DatabaseSpec extends FunSpec with ShouldMatchers with WithPersistenceManag
       val returnedMovie = persistenceManager.findSubtitleById(subtitle.id)
       returnedMovie should be(Some(Subtitle("abc", "testMovie")))
     }
+
+    it("should list the inserted subtitles as non-indexed") {
+      val subtitle = Subtitle("abcd", "testMovie3")
+      persistenceManager.saveSubtitle(subtitle)
+      val subtitles = persistenceManager.findSubtitlesToIndex()
+      subtitles.size should be(2)
+    }
+
+    it("should list mark a subtitle as indexed") {
+      val id: String = "abcd"
+      val subtitle = Subtitle(id, "testMovie3")
+      persistenceManager.saveSubtitle(subtitle)
+      persistenceManager.markSubtitleAsIndexed(id)
+      val subtitles = persistenceManager.findSubtitlesToIndex()
+      subtitles.size should be(1)
+    }
   }
 
 }

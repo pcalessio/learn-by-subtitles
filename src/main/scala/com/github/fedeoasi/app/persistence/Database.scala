@@ -16,13 +16,14 @@ object Movies extends Table[(String, Int, String, String)]("movies") {
     )
 }
 
-object Subtitles extends Table[(String, String)]("subtitles") {
+object Subtitles extends Table[(String, String, Boolean)]("subtitles") {
   def id = column[String]("id", O.PrimaryKey)
   def imdbId = column[String]("imdbId")
-  def * = id ~ imdbId
-  def forInsert = id ~ imdbId <>
+  def indexed = column[Boolean]("indexed")
+  def * = id ~ imdbId ~ indexed
+  def forInsert = id ~ imdbId ~ indexed <>
     (
-      {(id, imdbId) => Subtitle(id, imdbId)},
-      {subtitle: Subtitle => Some((subtitle.id, subtitle.imdbId))}
+      {(id, imdbId, indexed) => Subtitle(id, imdbId)},
+      {subtitle: Subtitle => Some((subtitle.id, subtitle.imdbId, false))}
     )
 }
