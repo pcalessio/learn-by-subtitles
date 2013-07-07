@@ -2,13 +2,13 @@ package com.github.fedeoasi.app
 
 import model.{SubEntry, Movie}
 import parsing.SrtParser
-import persistence.ProdPersistenceManager
+import persistence.{PersistenceManager, ProdPersistenceManager}
 import org.scalatra.DefaultValues._
 import org.scalatra.commands.{Field, ParamsOnlyCommand}
-import search.{SubtitleSearchResult, ElasticSearchInteractor}
+import search.{DisplayableSubtitleResult, SubtitleSearchResult, ElasticSearchInteractor}
 
 
-class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
+class LearnBySubtitlesServlet(persistenceManager: PersistenceManager) extends LearnBySubtitlesAppStack {
   val parser = new SrtParser()
 
   get("/") {
@@ -20,18 +20,27 @@ class LearnBySubtitlesServlet extends LearnBySubtitlesAppStack {
     contentType = "text/html"
     val querySeq: Seq[String] = multiParams("query")
     var results: List[SubtitleSearchResult] = List[SubtitleSearchResult]()
-    var subtitles: List[List[SubEntry]] = List[List[SubEntry]]()
+    var resultsWithMovies: List[DisplayableSubtitleResult] = List[DisplayableSubtitleResult]()
     if (querySeq.size > 0) {
       val query = querySeq(0)
       val searcher = new ElasticSearchInteractor()
       results = searcher.searchSubtitles(Config.indexName, query)
-      subtitles = results.map(
+      resultsWithMovies = results.map(
         result => {
-          parser.parseSrt(result.highlightedText, true)
+          val movieOption: Option[Movie] = persistenceManager.findMovieById(result.movieId)
+          val movie = movieOption match {
+            case Some(x) => x
+            case None => {
+              println("Unable to find movie with id " + result.movieId)
+              Movie("", 0, "", "")
+            }
+          }
+          val entries = parser.parseSrt(result.highlightedText, true)
+          DisplayableSubtitleResult(result.highlightedText, result.subtitleId, movie, result.score, entries)
         }
       )
     }
-    jade("search", "results" -> results, "subtitleList" -> subtitles)
+    jade("search", "results" -> resultsWithMovies)
   }
 
   get("/subtitles") {

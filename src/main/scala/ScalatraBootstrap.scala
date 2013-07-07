@@ -7,8 +7,8 @@ import search.{SubtitleIndexingTask, ElasticSearchInteractor}
 
 class ScalatraBootstrap extends LifeCycle {
   override def init(context: ServletContext) {
-    context.mount(new LearnBySubtitlesServlet, "/*")
     val persistenceManager = ProdPersistenceManager()
+    context.mount(new LearnBySubtitlesServlet(persistenceManager), "/*")
     val searchInteractor = new ElasticSearchInteractor()
     val subtitleSearcher = new OpenSubtitlesSearcher()
     val indexName = Config.indexName

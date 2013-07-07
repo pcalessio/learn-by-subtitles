@@ -4,7 +4,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.create.{CreateIndexResponse, CreateIndexRequest}
 import org.elasticsearch.client.IndicesAdminClient
 import org.elasticsearch.common.settings.ImmutableSettings
-import com.github.fedeoasi.app.model.SubEntry
+import com.github.fedeoasi.app.model.{Movie, SubEntry}
 import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
 import java.text.SimpleDateFormat
@@ -128,7 +128,7 @@ class ElasticSearchInteractor extends SearchInteractor{
       .addField("subtitleId")
       .addField("movieId")
       .addHighlightedField("text", 0, 0)
-      .setQuery(QueryBuilders.termQuery("text", query))
+      .setQuery(QueryBuilders.matchPhraseQuery("text", query))
       .execute()
       .actionGet()
     val hits = response.getHits()
@@ -183,3 +183,6 @@ case class SubEntrySearchResult(entry: SubEntry, subtitleId: String, movieId: St
 
 case class SubtitleSearchResult(highlightedText: String, subtitleId: String, movieId: String,
                                 score: Float)
+
+case class DisplayableSubtitleResult(highlightedText: String, subtitleId: String, movie: Movie,
+                                score: Float, entries: List[SubEntry])

@@ -34,13 +34,21 @@ abstract class BasePersistenceManager extends PersistenceManager {
   }
 
   def findSubtitlesToIndex(): List[Subtitle] = {
-    database withSession {
+    val list = database withSession {
       val q = for {
         s <- Subtitles if s.indexed === false
       } yield (s)
-
       q.list().map(s => Subtitle(s._1, s._2)).toList
     }
+    list.filter(
+      p => {
+        val movie = findMovieById(p.imdbId)
+        movie match {
+          case Some(x) => true
+          case None => false
+        }
+      }
+    )
   }
 
   def markSubtitleAsIndexed(subId: String) {

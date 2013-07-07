@@ -1,5 +1,4 @@
--@ val results: List[com.github.fedeoasi.app.search.SubtitleSearchResult]
--@ val subtitleList: List[List[com.github.fedeoasi.app.model.SubEntry]]
+-@ val results: List[com.github.fedeoasi.app.search.DisplayableSubtitleResult]
 -@ val subsUrlBase: String = "/subtitles?imdbid="
 - attributes("newLocation") = "/search?query="
 - attributes("title") = "Search through subtitles"
@@ -13,24 +12,29 @@
     table(class="standardTable")
         thead
             tr
+                th
+                th(class="title") Title
                 th SubtitleId
-                th MovieId
                 th Score
         tbody
         - for(result <- results) {
         tr
+            td(class="first image")
+                img(src={result.movie.posterUrl})
+            td= {result.movie.title}
             td= {result.subtitleId}
-            td= {result.movieId}
             td= {result.score}
         tr(class="spacer")
         - }
 - }
 
-#subtitlesTable.standardTableDiv
-    - if(!subtitleList.isEmpty) {
-    -   for(subtitles <- subtitleList) {
-    -     attributes("subtitles") = subtitles
-    -     render("subtitlesTableDiv.jade")
+    - if(!results.isEmpty) {
+    - var index = 1
+    -   for(result <- results) {
+        div(id="result#{result.subtitleId}" class="standardTableDiv")
+            -  attributes("subtitles") = result.entries
+            -  render("subtitlesTableDiv.jade")
+    -       index += 1
     -   }
     - }
 
