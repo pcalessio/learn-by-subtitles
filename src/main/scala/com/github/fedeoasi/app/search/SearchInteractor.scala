@@ -31,7 +31,6 @@ trait SearchInteractor {
 }
 
 class ElasticSearchInteractor extends SearchInteractor{
-//  val node = nodeBuilder().client(false).clusterName("lbs").node()
   val settings = ImmutableSettings.settingsBuilder()
     .put("cluster.name", "lbs").build();
   val client = new TransportClient(settings)

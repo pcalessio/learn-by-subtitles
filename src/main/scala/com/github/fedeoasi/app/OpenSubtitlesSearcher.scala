@@ -24,6 +24,8 @@ trait SubtitleSearcher {
   def searchSubtitles(imdbId: String): String
   def downloadSubtitle(id: String): String
   def getSubtitleText(existingSubtitle: Option[Subtitle]): String
+  def searchSubtitlesOnline(imdbId: String): Option[(Subtitle, String)]
+  def getSubtitleCandidates(imdbId: String): Array[Object]
 }
 
 class OpenSubtitlesSearcher extends SubtitleSearcher {
@@ -81,49 +83,65 @@ class OpenSubtitlesSearcher extends SubtitleSearcher {
     existingSubtitle match {
       case Some(_) => getSubtitleText(existingSubtitle)
       case None => {
-        val cleanId = cleanImdbId(imdbId)
-        println(token)
-        println("searching for " + cleanId)
-        val searchParam: java.util.Map[String, AnyRef] = new java.util.HashMap[String, AnyRef]
-        searchParam.put("sublanguageid", "eng")
-        searchParam.put("imdbid", cleanId)
-
-        val response = withTokenCheck(token) {
-          (token) => client.execute(config, "SearchSubtitles", Array[AnyRef](token, Array(searchParam)))
-        }
-        val responseMap: Map[String, AnyRef] = response.asInstanceOf[Map[String, AnyRef]]
-        val data = responseMap.get("data")
-        if (!data.isInstanceOf[Array[Object]]) {
-          println("No data returned for id " + imdbId)
-          return null
-        }
-        val dataArray: Array[Object] = responseMap.get("data").asInstanceOf[Array[Object]]
-        val filteredDataArray = dataArray.filter(
-          (subtitle) => {
-            subtitle.asInstanceOf[Map[String, String]].get("SubFormat") == "srt"
+        val searchResult: Option[(Subtitle, String)] = searchSubtitlesOnline(imdbId)
+        searchResult match {
+          case Some(x) => {
+            val subtitle = x._1
+            val subtitleString = x._2
+            IOUtils.copy(new StringReader(subtitleString), new FileOutputStream(getSubtitleFileLocation(subtitle.id)))
+            ProdPersistenceManager().saveSubtitle(subtitle)
+            return subtitleString
           }
-        )
-        val sorted = filteredDataArray.sortWith(
-          (o1, o2) => {
-            getRating(o1) > getRating(o2)
-          }
-        )
-        val subtitleMap: Map[String, String] = sorted(0).asInstanceOf[Map[String, String]]
-//        sorted.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("SubFormat")))
-
-        if (!dataArray.isEmpty) {
-          val subtitle: String = downloadSubtitle(subtitleMap.get("IDSubtitleFile"))
-          val subtitleId: String = subtitleMap.get("IDSubtitle")
-          IOUtils.copy(new StringReader(subtitle), new FileOutputStream(getSubtitleFileLocation(subtitleId)))
-          ProdPersistenceManager().saveSubtitle(Subtitle(subtitleId, imdbId))
-          return subtitle
-
+          case None => null
         }
-        return null
       }
     }
   }
 
+  def getSubtitleCandidates(imdbId: String): Array[Object] = {
+    val cleanId = cleanImdbId(imdbId)
+    println(token)
+    println("searching for " + cleanId)
+    val searchParam: java.util.Map[String, AnyRef] = new java.util.HashMap[String, AnyRef]
+    searchParam.put("sublanguageid", "eng")
+    searchParam.put("imdbid", cleanId)
+
+    val response = withTokenCheck(token) {
+      (token) => client.execute(config, "SearchSubtitles", Array[AnyRef](token, Array(searchParam)))
+    }
+    val responseMap: Map[String, AnyRef] = response.asInstanceOf[Map[String, AnyRef]]
+    val data = responseMap.get("data")
+    if (!data.isInstanceOf[Array[Object]]) {
+      println("No data returned for id " + imdbId)
+      return null
+    }
+    val dataArray: Array[Object] = responseMap.get("data").asInstanceOf[Array[Object]]
+    val filteredDataArray = dataArray.filter(
+      (subtitle) => {
+        subtitle.asInstanceOf[Map[String, String]].get("SubFormat") == "srt"
+      }
+    )
+    val sorted = filteredDataArray.sortWith(
+      (o1, o2) => {
+        getRating(o1) > getRating(o2)
+      }
+    )
+    //sorted.foreach(sub => println(sub.asInstanceOf[Map[String, String]].get("SubFormat")))
+    sorted
+  }
+
+  def searchSubtitlesOnline(imdbId: String): Option[(Subtitle, String)] = {
+    val dataArray = getSubtitleCandidates(imdbId)
+    val subtitleMap: Map[String, String] = dataArray(0).asInstanceOf[Map[String, String]]
+
+    if (!dataArray.isEmpty) {
+      val subtitleString: String = downloadSubtitle(subtitleMap.get("IDSubtitleFile"))
+      val subtitleId: String = subtitleMap.get("IDSubtitle")
+      val subtitle: Subtitle = Subtitle(subtitleId, imdbId)
+      return Some(subtitle, subtitleString)
+    }
+    return None
+  }
 
   def getSubtitleText(existingSubtitle: Option[Subtitle]): String = {
     readFile(getSubtitleFileLocation(existingSubtitle.get.id))
